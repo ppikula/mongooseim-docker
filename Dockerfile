@@ -17,7 +17,8 @@ RUN apt-get -q update
 RUN apt-get install mongooseim -y
 
 EXPOSE 5222 5280 5269
+#VOLUME ["/usr/lib/mongooseim/", "/usr/lib/mongooseim/"]
 
-CMD ["start"]
+CMD ["live"]
 ENTRYPOINT ["/usr/lib/mongooseim/bin/mongooseimctl"]
 
