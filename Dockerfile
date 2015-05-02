@@ -3,6 +3,7 @@ MAINTAINER Pawel Pikula <pawel.pikula@erlang-solutions.com>
 
 ENV HOME /opt/mongooseim
 ENV MONGOOSEIM_VERSION stable
+ENV PATH /opt/mongooseim/rel/mongooseim/bin/:$PATH
 
 # install required packages
 RUN apt-get update && apt-get install -y   wget \
@@ -32,9 +33,12 @@ RUN git clone https://github.com/esl/MongooseIM.git -b $MONGOOSEIM_VERSION /opt/
     && cd /opt/mongooseim \
     && make rel
 
-EXPOSE 5222 5280 5269 4369
+COPY ./start.sh start.sh
 
+# expose xmpp, rest, s2s, epmd, distributed erlang
+EXPOSE 5222 5280 5269 4369 9100
 
-#CMD ["live"]
-#ENTRYPOINT ["/opt/mongooseim/rel/mongooseim/bin/mongooseimctl"]
+# TODO: expose cfg/vmargs/mnesia db/
+
+ENTRYPOINT ["./start.sh"]
 
