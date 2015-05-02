@@ -1,24 +1,40 @@
-FROM ubuntu:14.04
+FROM ubuntu:14.10
 MAINTAINER Pawel Pikula <pawel.pikula@erlang-solutions.com>
 
 ENV HOME /opt/mongooseim
-ENV MONGOOSEIM_VERSION 1.5
-ENV DEBIAN_FRONTEND noninteractive
+ENV MONGOOSEIM_VERSION stable
+
+# install required packages
+RUN apt-get update && apt-get install -y   wget \
+                                           git \
+                                           make \
+                                           gcc \
+                                           libc6-dev \
+                                           libncurses5-dev \
+                                           libssl-dev \
+                                           libexpat1-dev \
+                                           libpam0g-dev
 
 # add esl packages
-RUN apt-get install wget -y
-RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
-RUN dpkg -i erlang-solutions_1.0_all.deb
-RUN wget http://packages.erlang-solutions.com/debian/erlang_solutions.asc
-RUN apt-key add erlang_solutions.asc
+RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
+    && dpkg -i erlang-solutions_1.0_all.deb \
+    && wget http://packages.erlang-solutions.com/debian/erlang_solutions.asc\
+    && apt-key add erlang_solutions.asc \
+    && apt-get update \
+    && apt-get install -y erlang-base \
+                          erlang-dev \
+                          erlang-nox \
+                          erlang-dialyzer \
+                          erlang-reltool
+
+# install mim from source
+RUN git clone https://github.com/esl/MongooseIM.git -b $MONGOOSEIM_VERSION /opt/mongooseim \
+    && cd /opt/mongooseim \
+    && make rel
+
+EXPOSE 5222 5280 5269 4369
 
 
-RUN apt-get -q update
-RUN apt-get install mongooseim -y
-
-EXPOSE 5222 5280 5269
-#VOLUME ["/usr/lib/mongooseim/", "/usr/lib/mongooseim/"]
-
-CMD ["live"]
-ENTRYPOINT ["/usr/lib/mongooseim/bin/mongooseimctl"]
+#CMD ["live"]
+#ENTRYPOINT ["/opt/mongooseim/rel/mongooseim/bin/mongooseimctl"]
 
