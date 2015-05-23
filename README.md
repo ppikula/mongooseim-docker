@@ -13,17 +13,20 @@ Its home at GitHub is http://github.com/esl/MongooseIM.
 
 To start interavtive session:
 
-`$ docker run -it  mongooseim/mongooseim-docker live`
+`$ docker run -i -t  mongooseim/mongooseim-docker live`
 
 To start mongooseim in the background, logs will be available via `docker logs`
 
-`$ docker run -d  mongooseim/mongooseim-docker`
+`$ docker run -d -t  mongooseim/mongooseim-docker`
+
+Note that there is the `-t` option, without it the `mongooseim debug` shell won't
+work if you try to start it with docker exec
 
 To attach debug shell to already running node
 
 `$ docker exec -it NAME_OF_COTAINER live`
 
-### Cluster mongooseim
+### Create cluster mongooseim nodes
 
 To be able to create a mongooseim cluster you need to specify hostname for
 the containers. Based on hostname the `start.sh` script will start a node with
