@@ -1,4 +1,5 @@
 #!/bin/bash
+MIMDIR="/opt/mongooseim/rel/mongooseim/bin"
 
 if [ -n "$HOSTNAME" ]; then
     VMARGS=/opt/mongooseim/rel/mongooseim/etc/vm.args
@@ -8,14 +9,12 @@ if [ -n "$HOSTNAME" ]; then
 fi
 
 if [ -n "$CLUSTER_WITH" ]; then
-    mongooseimctl add_to_cluster mongooseim@$CLUSTER_WITH
+    $MIMDIR/mongooseimctl add_to_cluster mongooseim@$CLUSTER_WITH
 fi
 
 if [ "$#" -ne 1 ]; then
-    mongooseimctl start
-    sleep 2
-    tail -F $MONGOOSEIM_REL_DIR/log/ejabberd.log
+   $MIMDIR/mongooseim live --noshell -noinput +Bd
 else
-    mongooseimctl $1
+   $MIMDIR/mongooseimctl $1
 fi
 
