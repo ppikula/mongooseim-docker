@@ -36,7 +36,7 @@ RUN git clone https://github.com/esl/MongooseIM.git -b $MONGOOSEIM_VERSION /opt/
     && rm -rf /opt/mongooseim/rel/mongooseim/log \
     && ln -s /data/log /opt/mongooseim/rel/mongooseim/log
 
-COPY ./start.sh start.sh
+ADD ./start.sh start.sh
 
 # expose xmpp, rest, s2s, epmd, distributed erlang
 EXPOSE 5222 5280 5269 4369 9100
