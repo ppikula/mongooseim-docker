@@ -32,15 +32,17 @@ RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
 # install mim from source
 RUN git clone https://github.com/esl/MongooseIM.git -b $MONGOOSEIM_VERSION /opt/mongooseim \
     && cd /opt/mongooseim \
-    && make rel
+    && make rel \
+    && rm -rf /opt/mongooseim/rel/mongooseim/log \
+    && ln -s /data/log /opt/mongooseim/rel/mongooseim/log
 
 COPY ./start.sh start.sh
 
 # expose xmpp, rest, s2s, epmd, distributed erlang
-EXPOSE 5222 5280 5269 4369 9100 
+EXPOSE 5222 5280 5269 4369 9100
 
-
-# TODO: expose cfg/vmargs/mnesia db/
+# Define mount points.
+VOLUME ["/data/mnesia", "/data/log"]
 
 ENTRYPOINT ["./start.sh"]
 

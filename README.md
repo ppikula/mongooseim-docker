@@ -24,7 +24,13 @@ work if you try to start it with docker exec
 
 To attach debug shell to already running node
 
-`$ docker exec -it NAME_OF_COTAINER live`
+`$ docker exec -it CONTAINER_NAME mongooseimctl debug`
+
+Moreover with the `docker exec` command you can do any mongoosectl command for example
+register a new user:
+
+`$ docker exec -it CONTAINER_NAME mongooseimctl mongooseimctl register pawel localhost test`
+
 
 ### Create cluster mongooseim nodes
 
@@ -43,7 +49,7 @@ env variable.
 `$ docker run -d -h mim2 --name mim2 --link mim1:mim1 -e CLUSTER_WITH=mim1 mongooseim/mongooseim-docker `
 
 We started a new node with sname: `mognooseim@mim2` which will join the cluster
-to which mim1 does belong. Note that link name and CLUSTER\_WITH *must* match
+to which mim1 does belong. Note that link name and CLUSTER_WITH *must* match
 the hostname of initial node. It wouldn't work if set in the following way:
 `--link mim1:my_initial_node` and `-e CLUSTER_WITH=my_initial_node_name`.
 
@@ -51,7 +57,6 @@ the hostname of initial node. It wouldn't work if set in the following way:
 
 // cp from image
 // modify
-// attach volume
 
 ## Other versions
 
@@ -63,6 +68,8 @@ to desired branch/tag and then build a new image.
 
 ## Volumes
 
+* `/data/log` - mongooseim logs directory
+* `/data/mnesia` - mnesia dir
 
 ## Exposed ports
 

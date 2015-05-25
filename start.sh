@@ -13,7 +13,7 @@ if [ -n "$CLUSTER_WITH" ]; then
 fi
 
 if [ "$#" -ne 1 ]; then
-   $MIMDIR/mongooseim live --noshell -noinput +Bd
+   $MIMDIR/mongooseim live --noshell -noinput +Bd -mnesia dir \"/data/mnesia/\"
 else
    $MIMDIR/mongooseimctl $1
 fi
