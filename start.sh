@@ -1,5 +1,5 @@
 #!/bin/bash
-MIMDIR="/opt/mongooseim/rel/mongooseim/bin"
+MIMDIR="/opt/mongooseim/rel/mongooseim/"
 
 if [ -n "$HOSTNAME" ]; then
     VMARGS=/opt/mongooseim/rel/mongooseim/etc/vm.args
@@ -8,13 +8,17 @@ if [ -n "$HOSTNAME" ]; then
     eval sed "$SEDARG"
 fi
 
+
 if [ -n "$CLUSTER_WITH" ]; then
-    $MIMDIR/mongooseimctl add_to_cluster mongooseim@$CLUSTER_WITH
+   $MIMDIR/bin/mongooseimctl add_to_cluster mongooseim@$CLUSTER_WITH
 fi
 
+mkdir -p "$MIMDIR/Mnesia.mongooseim@$HOSTNAME"
+ln -sfn "$MIMDIR/Mnesia.mongooseim@$HOSTNAME" "/data/mnesia/Mnesia.mongooseim@$HOSTNAME" 
+
 if [ "$#" -ne 1 ]; then
-   $MIMDIR/mongooseim live --noshell -noinput +Bd -mnesia dir \"/data/mnesia/\"
+   $MIMDIR/bin/mongooseim live --noshell -noinput +Bd
 else
-   $MIMDIR/mongooseimctl $1
+   $MIMDIR/bin/mongooseimctl $1
 fi
 
