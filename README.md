@@ -31,7 +31,7 @@ To start MongooseIM in the background (logs are available via `docker logs CONTA
 
 `$ docker run -d -t  -p 5222:5222 mongooseim/mongooseim-docker`
 
-Note that there is the `-t` option also in the background case, without it
+Note the -t option also for the background case, without it
 the `mongooseim debug` shell won't be able to attach to running MongooseIM.
 
 To attach the menstioned debug shell to already running node use:
@@ -52,7 +52,7 @@ To be able to create a MongooseIM cluster you need to set the hostname for
 the containers. Based on the hostname the `start.sh` script will start a node with
 the following sname `mongooseim@HOSTNAME`.
 
-Then, to create a cluster, first you need to start initial node:
+Then, to create a cluster, you first need to start an initial node:
 
 `$ docker run -d -t -h mim1 --name mim1 mongooseim/mongooseim-docker `
 
@@ -70,13 +70,13 @@ It wouldn't work if set in the following way:
 `--link mim1:my_initial_node` and `-e CLUSTER_WITH=my_initial_node_name`.
 
 In this case the IP address will be resolved correctly but it won't match
-sname of the CLUSTER_WITH host - in a result nodes won't be able to cluster.
+sname of the CLUSTER_WITH host - as a result nodes won't be able to cluster.
 
 ## Change configuration
 
 The best way to replace the default config file is to create a new image that uses
 `mongooseim/mongooseim-docker` as a base image and just replace the config file
-with the ADD command. Moreover that approach allows to update any MongooseIM file.
+with the ADD command. Moreover this approach allows you to update any MongooseIM file.
 
 For example new Dockerfile might look like this (assuming that ejabberd.cfg is present in the
 current directory:
@@ -87,14 +87,14 @@ FROM mongooseim/mongooseim-docker
 ADD ./ejabberd.cfg  /opt/mongooseim/rel/mongooseim/etc/ejabberd.cfg
 ```
 
-There is also a way that doesn't require creating  we should be
-able to mount given file with `-v option`:
+There is also a way that doesn't require creating, so  we should be
+able to mount the given file with `-v option`:
 
 ```
 docker run -v `pwd`/ejabberd.cfg:/opt/mongooseim/rel/mongooseim/etc/ejabberd.cfg mongooseim/mongooseim-docker`
 ```
 
-To get default config one need to run a container and then use the `docker cp`
+To get the default config you need to run a container and then use the `docker cp`
 command to copy it from container or just take it from https://github.com/esl/MongooseIM/blob/master/rel/files/ejabberd.cfg (remember to select correct branch!)
 
 ## Persistent data
@@ -104,7 +104,7 @@ There are two volumes that one might want to persist or share between image upgr
 * `/data/log`
 * `/data/mnesia`
 
-To bind a volume we are using -v option:
+To bind a volume you can use -v option:
 
 ```
 docker run -td -h mim1 -v `pwd`/mnesia:/data/mnesia -v `pwd`/log:/data/log --name mim1 mongooseim/mongooseim-docker
@@ -113,7 +113,7 @@ docker run -td -h mim1 -v `pwd`/mnesia:/data/mnesia -v `pwd`/log:/data/log --nam
 It will start a MongooseIM instance and it will bind the mnesia dir and log directory
 to the `mnesia` and `log` dir in the current working dir.
 
-The mnesia directory would look like this:
+The mnesia directory will look like this:
 
 ```
 ls -l mnesia
@@ -121,8 +121,8 @@ drwxr-xr-x  16 pawel.pikula  staff  544 May 25 16:05 Mnesia.mongooseim@mim1
 drwxr-xr-x  16 pawel.pikula  staff  544 May 25 16:05 Mnesia.mongooseim@mim2
 ```
 
-In the result, it is possible to use one volume for all instances but in case of
-log directory, the log files are saved directly in that directory:
+As a result it is possible to use one volume for all instances, but in case of
+the log directory the log files are saved directly in that directory:
 
 ```
 ls -la log
@@ -139,5 +139,4 @@ For the different versions of MongooseIM check the tags tab:
 https://registry.hub.docker.com/u/mongooseim/mongooseim-docker/tags/manage/
 
 In case you need a different version you have to fork and edit Dockerfile and change `MONGOOSEIM_VERSION` to desired branch/tag and then build a new image.
-
 
