@@ -23,11 +23,7 @@ RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
     && wget http://packages.erlang-solutions.com/debian/erlang_solutions.asc\
     && apt-key add erlang_solutions.asc \
     && apt-get update \
-    && apt-get install -y erlang-base \
-                          erlang-dev \
-                          erlang-nox \
-                          erlang-dialyzer \
-                          erlang-reltool
+    && apt-get install -y esl-erlang=1:17.5
 
 # install mim from source
 RUN git clone https://github.com/esl/MongooseIM.git -b $MONGOOSEIM_VERSION /opt/mongooseim \
