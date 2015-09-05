@@ -46,7 +46,7 @@ we can  register a new user:
 
 `$ docker exec -it CONTAINER_NAME mongooseimctl mongooseimctl register pawel localhost test`
 
-### Create cluster of the MongooseIM nodes
+### Create cluster of the MongooseIM nodes using docker links
 
 To be able to create a MongooseIM cluster you need to set the hostname for
 the containers. Based on the hostname the `start.sh` script will start a node with
@@ -71,6 +71,67 @@ It wouldn't work if set in the following way:
 
 In this case the IP address will be resolved correctly but it won't match
 sname of the CLUSTER_WITH host - as a result nodes won't be able to cluster.
+
+### Create cluster of the MongooseIM nodes - multihost setup
+
+Clustering setup presented in the previous section only makes sense if all containers are on the same on the same 
+node. Otherwise, we won't be able to use links mechanism without extra work(ambassador pattern etc.). The situation is not as bad as it seems to be, the only thing we need to change is switch from `--link` to proper `--add-host` options which adds required entries to the `/etc/hosts` file,  Additionally we need to make sure, that we have exposed and forwarded all required ports, which are:
+* 4369 - for erlang port mapper daemon
+* 9100 - for actual cluster connections
+
+It was not an issue in the previous case, because by default all ports in the "docker network" are open, so containers are able to talk to each other using them. 
+Below is a sample Vagrant file, which shows how to do that with 2 hosts. See the Mongoose documentation for more details about clustering: http://mongooseim.readthedocs.org/en/latest/operation-and-maintenance/Cluster-configuration-and-node-management/.
+
+The Vagrant file has been taken from the issue [#3](https://github.com/ppikula/mongooseim-docker/issues/3) Thanks [oli-g](https://github.com/oli-g)!
+
+```ruby
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+HOSTS = [
+  { name: "mongooseim-1", ip: "192.168.200.2", master: true },
+  { name: "mongooseim-2", ip: "192.168.200.3" }
+]
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "ubuntu/trusty64"
+
+  HOSTS.each do |host|
+    config.vm.define host[:name] do |node|
+      node.vm.hostname = "#{host[:name]}-host"
+      node.vm.network "private_network", ip: host[:ip]
+
+      node.vm.provider "virtualbox" do |v|
+        v.name = "#{host[:name]}-vm"
+        v.cpus = 1
+        v.memory = 512
+      end
+
+      if host[:master]
+        node.vm.provision "docker", version: "1.7.1" do |d|
+          d.run "mongooseim/mongooseim-docker",
+            daemonize: true,
+            auto_assign_name: false,
+            args: "-t -p 5222:5222 -p 5280:5280 -p 5269:5269 -p 4369:4369 -p 9100:9100 -h #{host[:name]} --name #{host[:name]}"
+        end
+      end
+
+      if !host[:master]
+        master = HOSTS.find { |h| h[:master] }
+        node.vm.provision "docker", version: "1.7.1" do |d|
+          d.run "mongooseim/mongooseim-docker",
+            daemonize: true,
+            auto_assign_name: false,
+            args: "-t -p 5222:5222 -p 5280:5280 -p 5269:5269 -p 4369:4369 -p 9100:9100 -h #{host[:name]} --name #{host[:name]} --add-host #{master[:name]}:#{master[:ip]} -e CLUSTER_WITH=#{master[:name]}"
+        end
+      end
+
+      node.vm.provision "shell", inline: %q{usermod -a -G docker vagrant}
+      node.vm.provision "shell", inline: %q{ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill}
+    end
+  end
+end
+```
 
 ## Change configuration
 
