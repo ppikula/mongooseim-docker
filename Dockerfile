@@ -2,7 +2,7 @@ FROM ubuntu:14.04
 MAINTAINER Pawel Pikula <pawel.pikula@erlang-solutions.com>
 
 ENV HOME /opt/mongooseim
-ENV MONGOOSEIM_VERSION master
+ENV MONGOOSEIM_VERSION 1.6.0
 ENV MONGOOSEIM_REL_DIR /opt/mongooseim/rel/mongooseim
 ENV PATH /opt/mongooseim/rel/mongooseim/bin/:$PATH
 
