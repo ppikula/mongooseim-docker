@@ -1,4 +1,4 @@
-FROM ubuntu:14.10
+FROM ubuntu:14.04
 MAINTAINER Pawel Pikula <pawel.pikula@erlang-solutions.com>
 
 ENV HOME /opt/mongooseim
