@@ -44,7 +44,7 @@ it using the `--name` option during `docker run`.
 Actually with the `docker exec` command you can do any mongoosectl command for example
 we can  register a new user:
 
-`$ docker exec -it CONTAINER_NAME mongooseimctl mongooseimctl register pawel localhost test`
+`$ docker exec -it CONTAINER_NAME mongooseimctl register pawel localhost test`
 
 ### Create cluster of the MongooseIM nodes using docker links
 
