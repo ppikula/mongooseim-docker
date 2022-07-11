@@ -9,3 +9,12 @@ _[What is the change about]_
 ## Testing
   
 _[Automation, manual e2e, already covered(non functional change)]_
+
+
+<!-- This section can be empty -->
+
+<!--
+Examples:
+  * Does it affect users, internal services, data pipeline, etc.
+  *
+-->
